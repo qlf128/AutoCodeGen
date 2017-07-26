@@ -1,0 +1,13 @@
+CREATE TABLE `tbl_test_question` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '试题Id',
+  `question_id` int(11) DEFAULT NULL COMMENT '题号（1，2，3，4。。。）',
+  `title` varchar(1024) DEFAULT NULL COMMENT '题干',
+  `title_img` varchar(1024) DEFAULT NULL COMMENT '题干图片',
+  `correct_option` varchar(2) DEFAULT '' COMMENT '正确选项（ABCD）',
+  `option_score` int(11) unsigned DEFAULT '5' COMMENT '选项分值（默认5分）',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+  `create_user_id` int(11) unsigned DEFAULT NULL COMMENT '创建人',
+  `delete_flag` tinyint(4) DEFAULT NULL COMMENT '删除标识',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='试题';

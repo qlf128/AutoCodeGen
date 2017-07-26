@@ -1,0 +1,14 @@
+CREATE TABLE `tbl_session` (
+  `sessionkey` varchar(32) NOT NULL DEFAULT '',
+  `uid` int(10) unsigned DEFAULT NULL COMMENT '用户ID',
+  `lasttime` int(10) unsigned DEFAULT NULL COMMENT '最近更新',
+  `createtime` int(10) unsigned DEFAULT NULL COMMENT '创建时间',
+  `createip` varchar(32) DEFAULT NULL COMMENT 'IP',
+  `persist` enum('y','n') DEFAULT 'n' COMMENT '是否自动登录',
+  `postid` varchar(32) DEFAULT NULL,
+  `logoutid` varchar(32) DEFAULT NULL COMMENT '登出',
+  `src` enum('web','android','iphone') NOT NULL DEFAULT 'web' COMMENT '终端类型',
+  PRIMARY KEY (`sessionkey`),
+  KEY `uid_idx` (`uid`),
+  KEY `lasttime_idx` (`lasttime`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户登录session表';
