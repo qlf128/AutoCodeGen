@@ -27,11 +27,11 @@ public class ServiceFile extends Common{
 
         //updateByPrimaryKey
         methodBuilder.append(
-                String.format("\tpublic int updateByPrimaryKey(%s %s); \n\r",primaryKeyJavaType,primaryKeyJavaName)
+                String.format("\tpublic int updateByPrimaryKey(%s %s); \n\r",modelClassName,modelName)
         );
         //updateByPrimaryKeySelective
         methodBuilder.append(
-                String.format("\tpublic int updateByPrimaryKeySelective(%s %s); \n\r",primaryKeyJavaType,primaryKeyJavaName)
+                String.format("\tpublic int updateByPrimaryKeySelective(%s %s); \n\r",modelClassName,modelName)
         );
 
         //insert
@@ -41,13 +41,13 @@ public class ServiceFile extends Common{
 
         //delete
         methodBuilder.append(
-                String.format("\tpublic int delete(%s %s); \n\r",primaryKeyJavaType,primaryKeyJavaName)
+                String.format("\tpublic int deleteByPrimaryKey(%s %s); \n\r",primaryKeyJavaType,primaryKeyJavaName)
         );
 
 
         StringBuilder strBuilder = new StringBuilder();
 
-        strBuilder.append("package "+namespace+".service \n\r");
+        strBuilder.append("package "+namespace+".service; \n\r");
         strBuilder.append(
                 String.format("public interface I%sService { \n\r%s }",
                         convertUnderscodeToCapitals(captureFirst(tableInfo.getTableName())),

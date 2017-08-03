@@ -84,6 +84,9 @@ public class MybatisFile extends Common {
         StringBuilder updateMapStrBuilder = new StringBuilder();
 
         for(ItemInfo itemInfo : tableInfo.getItemInfoList()){
+            if(itemInfo.getName().equalsIgnoreCase(tableInfo.getPrimaryKeyName())){
+                continue;
+            }
             updateMapStrBuilder.append(itemInfo.getName());
             updateMapStrBuilder.append(" = ");
             updateMapStrBuilder.append(swithJdbcVarToJavaUseInMybatisXml(itemInfo.getName(),itemInfo.getType()));
@@ -98,7 +101,10 @@ public class MybatisFile extends Common {
         StringBuilder updateMapStrBuilder = new StringBuilder();
 
         for(ItemInfo itemInfo : tableInfo.getItemInfoList()){
-            updateMapStrBuilder.append(String.format("<if test=\"%s != null\" >",itemInfo.getName()));
+            if(itemInfo.getName().equalsIgnoreCase(tableInfo.getPrimaryKeyName())){
+                continue;
+            }
+            updateMapStrBuilder.append(String.format("<if test=\"%s != null\" >",convertUnderscodeToCapitals(itemInfo.getName())));
             updateMapStrBuilder.append(itemInfo.getName());
             updateMapStrBuilder.append(" = ");
             updateMapStrBuilder.append(swithJdbcVarToJavaUseInMybatisXml(itemInfo.getName(),itemInfo.getType()));
@@ -139,17 +145,17 @@ public class MybatisFile extends Common {
         Element id = new Element("id");
         id.setAttribute("column",tableInfo.getPrimaryKeyName());
         id.setAttribute("property","id");
-        id.setAttribute("jdbcType",tableInfo.getPrimaryKeyType());
+        id.setAttribute("jdbcType",convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType()));
         resultMap.addContent(id);
 
         for(ItemInfo info : tableInfo.getItemInfoList()){
             if(info.getName().equals(tableInfo.getPrimaryKeyName())){
                 continue;
             }
-            Element result = new Element("Result");
+            Element result = new Element("result");
             result.setAttribute("column",info.getName());
             result.setAttribute("property",convertUnderscodeToCapitals(info.getName()));
-            result.setAttribute("jdbcType",info.getType());
+            result.setAttribute("jdbcType",convertJdbcTypeToCapital(info.getType()));
             resultMap.addContent(result);
         }
         /*baseColumnList*/
@@ -168,7 +174,7 @@ public class MybatisFile extends Common {
                 "<include refid=\"Base_Column_List\" />",
                 tableInfo.getTableName(),
                 tableInfo.getPrimaryKeyName(),
-                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),tableInfo.getPrimaryKeyType()));
+                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType())));
         selectByPrimaryKey.addContent(new CDATA(selectStr));
         mapper.addContent(selectByPrimaryKey);
 
@@ -191,7 +197,7 @@ public class MybatisFile extends Common {
                 tableInfo.getTableName(),
                 updateMapStr,
                 tableInfo.getPrimaryKeyName(),
-                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),tableInfo.getPrimaryKeyType()));
+                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType())));
         updateByPrimaryKey.addContent(new CDATA(updateByParimaryKeyStr));
 
         mapper.addContent(updateByPrimaryKey);
@@ -205,7 +211,7 @@ public class MybatisFile extends Common {
                 tableInfo.getTableName(),
                 genUpdateMapIncludeTestStr(tableInfo),
                 tableInfo.getPrimaryKeyName(),
-                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),tableInfo.getPrimaryKeyType())
+                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType()))
                 );
         updateByPrimaryKeySelective.addContent(new CDATA(updateByPrimaryKeySelectiveStr));
 
@@ -214,11 +220,11 @@ public class MybatisFile extends Common {
         /*delete*/
         Element delete = new Element("delete");
         delete.setAttribute("id","deleteByPrimaryKey");
-        delete.setAttribute("parameterType",switchJdbcTypeToJavaClassIncludePath(tableInfo.getPrimaryKeyType()));
+        delete.setAttribute("parameterType",switchJdbcTypeToJavaClassIncludePath(convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType())));
         String deleteStr = String.format("delete from %s where %s = %s",
                 tableInfo.getTableName(),
                 tableInfo.getPrimaryKeyName(),
-                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),tableInfo.getPrimaryKeyType())
+                swithJdbcVarToJavaUseInMybatisXml(tableInfo.getPrimaryKeyName(),convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType()))
                 );
         delete.addContent(new CDATA(deleteStr));
 
@@ -238,8 +244,31 @@ public class MybatisFile extends Common {
         Format format = Format.getPrettyFormat();
         format.setIndent("    ");
         out.setFormat(format);
-        out.output(document, new FileOutputStream(".\\code\\"+"I"+convertUnderscodeToCapitals(captureFirst(tableInfo.getTableName()))+"Mapper"+".xml"));
+
+
+        //删除文件中的 <![CDATA[ 和 ]]>
+
+        String xmlStr = out.outputString(document);
+        xmlStr = xmlStr.replace("<![CDATA[","");
+        xmlStr = xmlStr.replace("]]>","");
+
+        //写文件
+        outPutFile(".\\code\\"+"I"+convertUnderscodeToCapitals(captureFirst(tableInfo.getTableName()))+"Mapper"+".xml",xmlStr);
+
+    /*
+        方案二，先写入文件，再读出来修改
+        String filePath = ".\\code\\"+"I"+convertUnderscodeToCapitals(captureFirst(tableInfo.getTableName()))+"Mapper"+".xml";
+        out.output(document, new FileOutputStream(filePath));
+
+        //删除文件中的 <![CDATA[ 和 ]]>
+        String xmlStr = readFile(filePath);
+        xmlStr = xmlStr.replace("<![CDATA[","");
+        xmlStr = xmlStr.replace("]]>","");
+
+        outPutFile(filePath,xmlStr);
+    */
 
     }
+
 
 }

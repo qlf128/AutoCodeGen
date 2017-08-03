@@ -1,6 +1,7 @@
 package com.codeautogen.common;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Clob;
@@ -70,6 +71,75 @@ public class Common {
         return  str;
 
     }
+
+    /**
+     * 把小写的jdbc类型转换成大写的类型
+     * @param jdbcType
+     * @return
+     */
+    public String convertJdbcTypeToCapital(String jdbcType){
+        String jdbcTypeLowCase = jdbcType.toLowerCase();
+        String capitalJdbcType = "";
+
+        switch(jdbcTypeLowCase){
+            case "int":
+            case "integer":
+                capitalJdbcType = "INTEGER";
+                break;
+            case "char":
+                capitalJdbcType = "CHAR";
+                break;
+            case "varchar":
+                capitalJdbcType = "VARCHAR";
+                break;
+            case "tinyint":
+                capitalJdbcType = "TINYINT";
+                break;
+            case "bigint":
+                capitalJdbcType = "BIGINT";
+                break;
+            case "smallint":
+                capitalJdbcType = "SMALLINT";
+                break;
+            case "float":
+                capitalJdbcType = "FLOAT";
+                break;
+            case "double":
+                capitalJdbcType = "DOUBLE";
+                break;
+            case "numeric":
+                capitalJdbcType = "NUMERIC";
+                break;
+            case "bit":
+                capitalJdbcType = "BIT";
+                break;
+            case "date":
+                capitalJdbcType = "DATE";
+                break;
+            case "time":
+                capitalJdbcType = "TIME";
+                break;
+            case "timestamp":
+                capitalJdbcType = "TIMESTAMP";
+                break;
+            case "varbinary":
+                capitalJdbcType = "VARBINARY";
+                break;
+            case "clob":
+                capitalJdbcType = "CLOB";
+                break;
+            case "blob":
+                capitalJdbcType = "BLOB";
+                break;
+            case "enum": //mysql会有enum属性，简直了。。
+                capitalJdbcType = "ENUM";
+            default:
+                capitalJdbcType = "";
+                break;
+        }
+
+        return capitalJdbcType;
+    }
     /**
      * 切换jdbc类型成java类型，含路径，比如lang.java.Integer
      * 来源：http://www.cnblogs.com/kagome2014/p/5619677.html
@@ -110,7 +180,7 @@ public class Common {
                 javaType = "java.lang.String";
                 break;
             case "tinyint":
-                javaType = "java.lang.Byte";
+                javaType = "java.lang.Integer";
                 break;
             case "bigint":
                 javaType = "java.lang.Long";
@@ -178,7 +248,7 @@ public class Common {
                 javaType = "String";
                 break;
             case "tinyint":
-                javaType = "Byte";
+                javaType = "Integer";
                 break;
             case "bigint":
                 javaType = "Long";
@@ -228,7 +298,7 @@ public class Common {
 
     public String swithJdbcVarToJavaUseInMybatisXml(String jdbcName, String jdbcType){
         //a_bc_cd => #{aBcCd，jdbcType={jdbcType}}
-        return String.format("#{%s,jdbcType=%s}",convertUnderscodeToCapitals(jdbcName),jdbcType);
+        return String.format("#{%s,jdbcType=%s}",convertUnderscodeToCapitals(jdbcName),convertJdbcTypeToCapital(jdbcType));
     }
 
     /**
@@ -250,5 +320,40 @@ public class Common {
             e.printStackTrace();
         }
 
+    }
+
+    public String readFile(String filePath){
+        StringBuilder returnStrBuilder = new StringBuilder();
+        FileReader reader = null;
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            reader = new FileReader(file);
+            char[] buffer = new char[1024];
+            int charread = 0;
+            while ((charread = reader.read(buffer)) != -1) {
+
+                returnStrBuilder.append(buffer,0,charread);
+
+                //System.out.print(buffer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        } finally {
+
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            return returnStrBuilder.toString();
+        }
     }
 }

@@ -14,16 +14,17 @@ public class ModelFile extends Common {
 
     StringBuilder attributeStrBuilder = new StringBuilder();
     for(ItemInfo info: tableInfo.getItemInfoList()){
-        String attributeStr = String.format("private %s %s;",
+        String attributeStr = String.format("\tprivate %s %s;\n\r",
                 switchJdbcTypeToJavaClass(info.getType()),
                 convertUnderscodeToCapitals(info.getName()));
         attributeStrBuilder.append(attributeStr);
     }
 
-    strBuilder.append("package "+namespace+".model");
+    strBuilder.append("package "+namespace+".model;");
+    strBuilder.append("\n\r");
     strBuilder.append(
-            String.format("public class %s { %s }",
-                    convertUnderscodeToCapitals(tableInfo.getTableName()),
+            String.format("public class %s { \n\r%s }",
+                    convertUnderscodeToCapitals(captureFirst(tableInfo.getTableName())),
                     attributeStrBuilder.toString())
     );
 

@@ -34,62 +34,62 @@ public class ServiceImplFile extends Common {
         methodBuilder.append(
                 String.format("\t@Override \n" +
                         "\tpublic %s selectByPrimaryKey(%s %s){ \n\r" +
-                        "\t\treturn %s.selectByPrimaryKey(%s %s); \n" +
+                        "\t\treturn %s.selectByPrimaryKey(%s); \n" +
                         "\t} \n\r",
                         modelClassName,
                         primaryKeyJavaType,primaryKeyJavaName,
                         daoName,
-                        primaryKeyJavaType,primaryKeyJavaName)
+                        primaryKeyJavaName)
         );
 
         //updateByPrimaryKey
         methodBuilder.append(
                 String.format("\t@Override \n" +
                         "\tpublic int updateByPrimaryKey(%s %s){ \n\r" +
-                        "\t\treturn %s.updateByPrimaryKey(%s %s); \n" +
+                        "\t\treturn %s.updateByPrimaryKey(%s); \n" +
                         "\t} \n\r",
-                        primaryKeyJavaType,primaryKeyJavaName,
+                        modelClassName,modelName,
                         daoName,
-                        primaryKeyJavaType,primaryKeyJavaName)
+                        modelName)
         );
         //updateByPrimaryKeySelective
         methodBuilder.append(
                 String.format("\t@Override \n" +
                         "\tpublic int updateByPrimaryKeySelective(%s %s){ \n\r" +
-                        "\t\treturn %s.updateByPrimaryKeySelective(%s %s); \n" +
+                        "\t\treturn %s.updateByPrimaryKeySelective(%s); \n" +
                         "\t} \n\r",
-                        primaryKeyJavaType,primaryKeyJavaName,
+                        modelClassName,modelName,
                         daoName,
-                        primaryKeyJavaType,primaryKeyJavaName)
+                        modelName)
         );
 
         //insert
         methodBuilder.append(
                 String.format("\t@Override \n " +
                         "\tpublic int insert(%s %s){ \n\r" +
-                        "\t\treturn %s.insert(%s %s); \n" +
+                        "\t\treturn %s.insert(%s); \n" +
                         "\t} \n\r",
                         modelClassName,modelName,
                         daoName,
-                        modelClassName,modelName)
+                        modelName)
         );
 
         //delete
         methodBuilder.append(
                 String.format("\t@Override \n" +
-                        "\tpublic int delete(%s %s){ \n\r" +
-                        "\t\treturn %s.delete(%s %s); \n" +
+                        "\tpublic int deleteByPrimaryKey(%s %s){ \n\r" +
+                        "\t\treturn %s.deleteByPrimaryKey(%s); \n" +
                         "\t} \n\r",
                         primaryKeyJavaType,primaryKeyJavaName,
                         daoName,
-                        primaryKeyJavaType,primaryKeyJavaName
+                        primaryKeyJavaName
                         )
         );
 
 
         StringBuilder strBuilder = new StringBuilder();
 
-        strBuilder.append("package "+namespace+".service.impl \n\r");
+        strBuilder.append("package "+namespace+".service.impl; \n\r");
         strBuilder.append("@Service \n");
         strBuilder.append(
                 String.format("public class %sServiceImpl implements I%sService { \n\r%s }",
