@@ -144,7 +144,7 @@ public class MybatisFile extends Common {
         //pramaryKey
         Element id = new Element("id");
         id.setAttribute("column",tableInfo.getPrimaryKeyName());
-        id.setAttribute("property","id");
+        id.setAttribute("property",convertUnderscodeToCapitals(tableInfo.getPrimaryKeyName()));
         id.setAttribute("jdbcType",convertJdbcTypeToCapital(tableInfo.getPrimaryKeyType()));
         resultMap.addContent(id);
 

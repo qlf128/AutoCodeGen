@@ -39,11 +39,19 @@ public class CodeAutoGen {
             }else if(strLine[0].equals("  PRIMARY KEY (")){
                 tableInfo.setPrimaryKeyName(strLine[1]);
                 break;
-            }else{
+            }else if(strLine[0].equals("  UNIQUE KEY ")){ //有些人不定义主键，单定义unique key
+                tableInfo.setPrimaryKeyName(strLine[1]);
                 break;
             }
-
+            else{
+                break;
+            }
             //System.out.println(str);
+        }
+
+        if(tableInfo.getPrimaryKeyName() == null){ //如果没有主键，用第一个的字段当主键
+            tableInfo.setPrimaryKeyName(tableInfo.getItemInfoList().get(0).getName());
+            tableInfo.setPrimaryKeyType(tableInfo.getItemInfoList().get(0).getType());
         }
 
         for(ItemInfo itemInfo : tableInfo.getItemInfoList()){
